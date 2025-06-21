@@ -1,0 +1,147 @@
+@use "../../../styles/variables.scss" as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: $card-bg;
+  color: $text-primary;
+  height: $headerMinHeight;
+  display: flex;
+  align-items: center;
+  padding: 0 $spacing-md;
+  z-index: 1000;
+  box-shadow: 0 2px 8px $shadow-light;
+  border-bottom: 1px solid $border-light;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+
+  @media (max-width: $breakpoint-sm) {
+    padding: 0 $spacing-sm;
+    height: 56px;
+  }
+
+  .navbar-inner {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .navbar-bg {
+    background: transparent;
+  }
+
+  .left,
+  .right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .title {
+    font-weight: 600;
+    color: $text-primary;
+    font-size: 1.125rem;
+    
+    @media (max-width: $breakpoint-sm) {
+      font-size: 1rem;
+    }
+  }
+
+  .text-head {
+    color: $text-primary;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+    
+    @media (max-width: $breakpoint-sm) {
+      font-size: 0.875rem;
+    }
+  }
+
+  .text-sub-head {
+    color: $text-secondary;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .head-icon {
+    color: $primary;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: $primary-dark;
+    }
+  }
+
+  // Framework7 specific overrides
+  .navbar {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .navbar-inner {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .navbar-bg {
+    background: transparent;
+  }
+
+  // Custom button styles
+  .button {
+    background: transparent;
+    border: none;
+    padding: $spacing-sm;
+    border-radius: $border-radius-md;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: $surface-bg;
+      transform: translateY(-1px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // Logo styling
+  img {
+    border-radius: $border-radius-sm;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  // Search and cart icons
+  .search-icon,
+  .cart-icon {
+    color: $text-secondary;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: $primary;
+    }
+  }
+
+  // Badge styling
+  .badge {
+    background: $primary;
+    color: $text-inverse;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 10px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
