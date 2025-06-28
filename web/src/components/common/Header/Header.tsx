@@ -8,23 +8,35 @@ import {
   NavLeft,
   NavRight,
 } from "framework7-react";
-import { 
-  Stack, 
-  Typography, 
-  Link, 
+import {
+  Stack,
+  Typography,
+  Link,
   Box,
   Badge,
   IconButton,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  InputBase,
 } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PersonIcon from "@mui/icons-material/Person";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-import { logo } from "../../../assets/index";
+import { logo as oldLogo } from "../../../assets/index";
+import newLogo from "../../../assets/food-app-logo.svg";
 import Avatar from "../TextElem/Avatar";
 
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
@@ -32,6 +44,7 @@ import { getSelectedData } from "../../../store/components/library/library";
 import { setToggleStatus } from "../../../store/components/uiInteraction/uiInteraction";
 
 import "./header.scss";
+import { useState } from "react";
 
 // import { useNavigate } from "react-router-dom";
 
@@ -40,124 +53,250 @@ const Header = (props) => {
   const dispatch = useAppDispatch();
   const selectedSite = useAppSelector(getSelectedData("site"));
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);
+
+  const handleMobileMenuOpen = (event) => {
+    setMobileMenuAnchor(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileMenuAnchor(null);
+  };
+
+  const handleProfileClick = () => {
+    handleMobileMenuClose();
+    props.onUserIconClick();
+  };
 
   return (
     <>
-      <Navbar title="" className="header">
-        <NavLeft>
+      <div className="header">
+        {/* Left Section */}
+        <div className="header-left">
           <Button
             round={false}
-            // panelOpen="#panel-nested"
             style={{ padding: "0px", overflow: "visible" }}
             onClick={() => {
               dispatch(setToggleStatus({ key: "leftNav", status: true }));
             }}
           >
-            <img src={logo} style={{ width: "41px" }} />
+            <img src={newLogo} style={{ width: "41px" }} alt="Logo" />
           </Button>
-        </NavLeft>
-        <NavTitle>
-          {selectedSite && (
-            <Stack
-              spacing={isMobile ? 1 : 2}
-              direction="row"
-              alignItems="center"
-              sx={{ 
-                padding: "0px 5px",
-                minWidth: 0, // Allow text to shrink
-                flex: 1
-              }}
-            >
-              <Box sx={{ minWidth: 0, flex: 1 }}>
-                <Typography 
-                  noWrap 
-                  variant={isMobile ? "body2" : "body1"}
-                  sx={{ 
-                    fontWeight: 600,
-                    color: theme.palette.text.primary,
-                    fontSize: isMobile ? "0.875rem" : "1rem"
-                  }}
-                >
-                  {selectedSite.name}
+        </div>
+
+        {/* Title Section */}
+        <div className="header-title">
+          {isMobile ? (
+            // Mobile View
+            <>
+              <Box
+                className="location-section"
+                onClick={() =>
+                  dispatch(setToggleStatus({ key: "site", status: true }))
+                }
+              >
+                <LocationOnIcon
+                  sx={{ color: "primary.main", fontSize: "1.25rem" }}
+                />
+                <Typography noWrap className="location-text">
+                  {selectedSite ? selectedSite.name : "Select Location"}
                 </Typography>
-                <Typography 
-                  noWrap 
-                  variant="caption"
-                  sx={{ 
-                    color: theme.palette.text.secondary,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 0.5
-                  }}
-                >
-                  <LocationOnIcon sx={{ fontSize: "0.875rem" }} />
-                  {selectedSite.variant}
-                </Typography>
+                <ArrowDropDownIcon />
               </Box>
+            </>
+          ) : (
+            // Desktop View
+            <Box className="header-search-container">
+              <Box
+                className="location-section"
+                onClick={() =>
+                  dispatch(setToggleStatus({ key: "site", status: true }))
+                }
+              >
+                <LocationOnIcon sx={{ color: "primary.main" }} />
+                <Typography noWrap className="location-text">
+                  {selectedSite
+                    ? `${selectedSite.name}, ${selectedSite.variant}`
+                    : "Select Location"}
+                </Typography>
+                <ArrowDropDownIcon />
+              </Box>
+              <Divider
+                orientation="vertical"
+                flexItem
+                sx={{ mx: 1, height: "28px", alignSelf: "center" }}
+              />
+              <Box className="search-section">
+                <SearchIcon sx={{ color: "text.secondary", mr: 1 }} />
+                <InputBase
+                  placeholder="Search for restaurant, cuisine or a dish"
+                  fullWidth
+                  className="search-input"
+                />
+              </Box>
+            </Box>
+          )}
+        </div>
+
+        {/* Right Section */}
+        <div className="header-right">
+          {!isMobile ? (
+            // Desktop Right Section
+            <Stack direction="row" spacing={1} alignItems="center">
               <IconButton
                 size="small"
-                onClick={() => {
-                  dispatch(setToggleStatus({ key: "site", status: true }));
-                }}
                 sx={{
-                  color: theme.palette.primary.main,
-                  '&:hover': {
-                    backgroundColor: theme.palette.primary.light + '20'
-                  }
+                  color: theme.palette.text.secondary,
+                  "&:hover": {
+                    backgroundColor: theme.palette.action.hover,
+                  },
                 }}
               >
-                <ModeEditIcon sx={{ fontSize: "1.25rem" }} />
+                <Badge badgeContent={3} color="primary">
+                  <ShoppingCartIcon />
+                </Badge>
               </IconButton>
+              <Button
+                round={false}
+                style={{ padding: "0px", overflow: "visible" }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  props.onUserIconClick();
+                }}
+              >
+                <Avatar name="Pardeep Kumar" />
+              </Button>
+            </Stack>
+          ) : (
+            // Mobile Right Section
+            <Stack direction="row-reverse" spacing={1} alignItems="center">
+              <IconButton
+                size="small"
+                onClick={handleMobileMenuOpen}
+                sx={{
+                  color: theme.palette.text.secondary,
+                  "&:hover": {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                }}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              <Button
+                round={false}
+                style={{ padding: "0px", overflow: "visible" }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  props.onUserIconClick();
+                }}
+              >
+                <Avatar name="Pardeep Kumar" />
+              </Button>
             </Stack>
           )}
-        </NavTitle>
-        <NavRight>
-          <Stack direction="row" spacing={1} alignItems="center">
-            {!isMobile && (
-              <>
+        </div>
+      </div>
+
+      {
+        isMobile && (
+          <div className="header">
+            {/* Left Section */}
+            {/* <div className="header-left">
+              <Button
+                round={false}
+                style={{ padding: "0px", overflow: "visible" }}
+                onClick={() => {
+                  dispatch(setToggleStatus({ key: "leftNav", status: true }));
+                }}
+              >
+                <img src={newLogo} style={{ width: "41px" }} alt="Logo" />
+              </Button>
+            </div> */}
+
+            {/* Title Section */}
+            <div className="header-title" style={{ gridColumn: "1/2" }}>
+              <Box className="search-section">
+                <SearchIcon sx={{ color: "text.secondary", mr: 1 }} />
+                <InputBase
+                  placeholder="Search for restaurant, cuisine or a dish"
+                  fullWidth
+                  className="search-input"
+                />
+              </Box>
+            </div>
+
+            {/* Right Section */}
+            <div className="header-right">
+              <Stack direction="row" spacing={1} alignItems="center">
                 <IconButton
                   size="small"
                   sx={{
                     color: theme.palette.text.secondary,
-                    '&:hover': {
-                      backgroundColor: theme.palette.action.hover
-                    }
-                  }}
-                >
-                  <SearchIcon />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  sx={{
-                    color: theme.palette.text.secondary,
-                    '&:hover': {
-                      backgroundColor: theme.palette.action.hover
-                    }
+                    "&:hover": {
+                      backgroundColor: theme.palette.action.hover,
+                    },
                   }}
                 >
                   <Badge badgeContent={3} color="primary">
                     <ShoppingCartIcon />
                   </Badge>
                 </IconButton>
-              </>
-            )}
-            <Button
-              round={false}
-              style={{ padding: "0px", overflow: "visible" }}
-              onClick={(e) => {
-                e.preventDefault();
-                props.onUserIconClick();
-              }}
-            >
-              <Avatar name="Pardeep Kumar" />
-            </Button>
-          </Stack>
-        </NavRight>
-        {/* <div slot="before-inner">Before Inner</div>
-        <div slot="after-inner">After Inner</div>
-        <div>Default slot</div> */}
-      </Navbar>
+              </Stack>
+            </div>
+          </div>)
+      }
+      {/* Mobile Menu */}
+      <Menu
+        anchorEl={mobileMenuAnchor}
+        open={Boolean(mobileMenuAnchor)}
+        onClose={handleMobileMenuClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        PaperProps={{
+          sx: {
+            mt: 1,
+            minWidth: 200,
+            borderRadius: 2,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+          },
+        }}
+      >
+        <MenuItem onClick={handleMobileMenuClose}>
+          <ListItemIcon>
+            <Badge badgeContent={3} color="primary">
+              <ShoppingCartIcon fontSize="small" />
+            </Badge>
+          </ListItemIcon>
+          <ListItemText>Cart (3)</ListItemText>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleProfileClick}>
+          <ListItemIcon>
+            <PersonIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Profile</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleMobileMenuClose}>
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Settings</ListItemText>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleMobileMenuClose}>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Logout</ListItemText>
+        </MenuItem>
+      </Menu>
     </>
   );
 };
